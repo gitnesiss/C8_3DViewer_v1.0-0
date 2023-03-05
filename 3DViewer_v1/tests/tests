@@ -1,0 +1,104 @@
+#include "../affine_transformations.h"
+#include "../pars.h"
+
+#test S21_PARS_001
+int ERROR = OK;
+structobject A;
+ERROR = pars("3DViewer_v1/tests/cube.obj", &A);
+ck_assert_int_eq(ERROR, OK);
+free_struct(&A);
+
+
+#test S21_PARS_002
+int ERROR = OK;
+structobject A;
+ERROR = pars("3DViewer_v1/tests/wman.obj", &A);
+ck_assert_int_eq(ERROR, err_the_file_did_not_open_or_is_missing);
+
+
+#test S21_PARS_003
+int ERROR = OK;
+structobject A;
+ERROR = pars("3DViewer_v1/tests/cube.obj", &A);
+ck_assert_int_eq(ERROR, OK);
+free_struct(&A);
+
+#test S21_PARS_004
+int ERROR = OK;
+structobject A;
+ERROR = pars("3DViewer_v1/tests/0_vertex.obj", &A);
+ck_assert_int_eq(ERROR, err_in_file_not_vertexes);
+
+#test S21_AFFINE_TRANSFORMATIONS_MOVE_X_001
+
+structobject A;
+pars("3DViewer_v1/tests/test_afinne.obj", &A);
+ck_assert_double_eq(A.arr_v[0], 1);
+all_rotation(&A, 2, 0, 0, 0, 0, 0, 1);
+ck_assert_double_eq(A.arr_v_copy[0], 3);
+free_struct(&A);
+
+#test S21_AFFINE_TRANSFORMATIONS_MOVE_Y_002
+
+structobject A;
+pars("3DViewer_v1/tests/test_afinne.obj", &A);
+all_rotation(&A, 0, 2, 0, 0, 0, 0, 1);
+ck_assert_double_eq(A.arr_v_copy[1], 3);
+free_struct(&A);
+
+#test S21_AFFINE_TRANSFORMATIONS_MOVE_Z_003
+
+structobject A;
+pars("3DViewer_v1/tests/test_afinne.obj", &A);
+all_rotation(&A, 0, 0, 2, 0, 0, 0, 1);
+ck_assert_double_eq(A.arr_v_copy[2], 3);
+free_struct(&A);
+
+#test S21_AFFINE_TRANSFORMATIONS_ROTATION_BY_OX_004
+
+structobject A;
+pars("3DViewer_v1/tests/test_afinne.obj", &A);
+all_rotation(&A, 0, 0, 0, 60, 0, 0, 1);
+double angleToRad = 60 * M_PI/180;
+double temp_y = cos(angleToRad) * 1 - sin(angleToRad) * 1;
+double temp_z = sin(angleToRad) * 1 + cos(angleToRad) * 1;
+ck_assert_double_eq(A.arr_v_copy[0], 1);
+ck_assert_double_eq(A.arr_v_copy[1], temp_y);
+ck_assert_double_eq(A.arr_v_copy[2], temp_z);
+free_struct(&A);
+
+#test S21_AFFINE_TRANSFORMATIONS_ROTATION_BY_OY_005
+
+structobject A;
+pars("3DViewer_v1/tests/test_afinne.obj", &A);
+all_rotation(&A, 0, 0, 0, 0, 60, 0, 1);
+double angleToRad = 60 * M_PI/180;
+double temp_x = cos(angleToRad) * 3 + sin(angleToRad) * 3;
+double temp_z = -sin(angleToRad) * 3 + cos(angleToRad) * 3;
+ck_assert_double_eq(A.arr_v_copy[3], temp_x);
+ck_assert_double_eq(A.arr_v_copy[4], 3);
+ck_assert_double_eq(A.arr_v_copy[5], temp_z);
+free_struct(&A);
+
+#test S21_AFFINE_TRANSFORMATIONS_ROTATION_BY_OZ_006
+
+structobject A;
+pars("3DViewer_v1/tests/test_afinne.obj", &A);
+all_rotation(&A, 0, 0, 0, 0, 0, 60, 1);
+double angleToRad = 60 * M_PI/180;
+double temp_x = cos(angleToRad) * 3 - sin(angleToRad) * 3;
+double temp_y = sin(angleToRad) * 3 + cos(angleToRad) * 3;
+ck_assert_double_eq(A.arr_v_copy[3], temp_x);
+ck_assert_double_eq(A.arr_v_copy[4], temp_y);
+ck_assert_double_eq(A.arr_v_copy[5], 3);
+free_struct(&A);
+
+#test S21_AFFINE_TRANSFORMATIONS_SCALE_ALL_006
+
+structobject A;
+pars("3DViewer_v1/tests/test_afinne.obj", &A);
+all_rotation(&A, 0, 0, 0, 0, 0, 0, 5);
+ck_assert_double_eq(A.arr_v_copy[3], 15);
+ck_assert_double_eq(A.arr_v_copy[4], 15);
+ck_assert_double_eq(A.arr_v_copy[5], 15);
+free_struct(&A);
